@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shrimp Production and Analysis</title>
+    <link rel="stylesheet" type="text/css" href="/css/server.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .inputBlock {
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 10px;
+            width: 200px;
+        }
+
+        #submitButton {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Shrimp Production and Analysis</h1>
+    
+    <div class="inputBlock">
+        <label for="femaleInput">Female Shrimp:</label>
+        <input type="text" id="femaleInput" placeholder="Enter the number of female shrimp">
+    </div>
+    <div class="inputBlock">
+        <label for="maleInput">Male Shrimp:</label>
+        <input type="text" id="maleInput" placeholder="Automatically mirrors female shrimp">
+    </div>
+    <div class="inputBlock">
+        <label for="developedPerDayInput">Developed Females per Day:</label>
+        <input type="text" id="developedPerDayInput" placeholder="Enter the number of females developed per day">
+    </div>
+
+    <label for="temperatureInput">Enter the water temperature (°C):</label>
+    <input type="number" id="temperatureInput">
+
+    <button onclick="calculateProduction()">Calculate Production and Analysis</button>
+
+    <p id="result"></p>
+
+    <script>
+        function calculateProduction() {
+            // Get input values
+            const broodstockInput = document.getElementById('femaleInput');
+            const temperatureInput = document.getElementById('temperatureInput');
+
+            const broodstockCount = parseInt(femaleInput.value);
+            const temperature = parseFloat(temperatureInput.value);
+
+            // Check if the inputs are valid numbers
+            if (isNaN(broodstockCount) || broodstockCount < 0 ||
+                isNaN(temperature)) {
+                alert('Please enter valid numbers for all inputs.');
+                return;
+            }
+
+            // Assume a production rate of 50 shrimps per broodstock (you can adjust this based on your specific scenario)
+            const productionRate = 100000;
+
+            // Calculate total shrimp production
+            const totalProduction = broodstockCount * productionRate;
+
+            // Calculate maintenance score based on temperature
+            const maintenanceScore = calculateMaintenanceScore(temperature);
+
+            // Display the results
+            const resultElement = document.getElementById('result');
+            resultElement.innerHTML = `
+                <p>Total Shrimp Production: ${totalProduction} shrimps</p>
+                <p>Maintenance Score: ${maintenanceScore}</p>
+            `;
+
+            // Send data to the server
+            sendDataToServer({
+                broodstockCount,
+                temperature,
+                totalProduction,
+                maintenanceScore
+            });
+        }
+
+        function calculateMaintenanceScore(temperature) {
+            // Simple formula for maintenance score based on temperature
+            // You can modify this formula based on your specific requirements
+            return temperature * 0.5;
+        }
+
+        function sendDataToServer(data) {
+            // Replace the following URL with the actual URL where your server is running
+            const serverUrl = 'http://localhost:5000/views/server';
+
+            fetch(serverUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Server response:', result);
+                })
+                .catch(error => {
+                    console.error('Error sending data to server:', error);
+                });
+        }
+    </script>
+
+
+    
+
+
+    <script>
+        document.getElementById('femaleInput').addEventListener('input', function () {
+            // Get the value of the female shrimp input
+            var femaleValue = this.value;
+
+            // Set the value of the male shrimp input to match the female shrimp input
+            document.getElementById('maleInput').value = femaleValue;
+        });
+
+        function submitForm() {
+            // You can add additional logic here to handle form submission if needed
+            alert('Form submitted!');
+        }
+    </script>
+
+</body>
+</html>
